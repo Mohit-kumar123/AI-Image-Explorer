@@ -1,0 +1,15 @@
+name: Build and Test Docker Images
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build backend Docker image
+        run: docker build ./server -t backend-test
+      - name: Build frontend Docker image
+        run: docker build ./client -t frontend-test
