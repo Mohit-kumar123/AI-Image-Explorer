@@ -2,9 +2,9 @@ name: Dockerized CI/CD
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build-and-deploy:
@@ -23,7 +23,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-     # ...existing code...
+      # Build and push backend Docker image
       - name: Build Backend Docker Image
         run: |
           docker buildx build \
@@ -44,6 +44,7 @@ jobs:
       - name: Push Backend Docker Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/gyaani-backend:latest
 
+      # Build and push frontend Docker image
       - name: Build Frontend Docker Image
         run: |
           docker buildx build \
@@ -54,4 +55,3 @@ jobs:
 
       - name: Push Frontend Docker Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/gyaani-frontend:latest
-# ...existing code...
