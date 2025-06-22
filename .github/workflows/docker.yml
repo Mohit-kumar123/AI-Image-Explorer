@@ -41,7 +41,7 @@ jobs:
             --build-arg STABILITY_API_KEY=${{ secrets.STABILITY_API_KEY }} \
             --build-arg COHERE_API_KEY=${{ secrets.COHERE_API_KEY }} \
             -t ${{ secrets.DOCKER_USERNAME }}/gyaani-backend:latest \
-            --load 
+            --load \
             ./server
 
       # Step 5: Push backend Docker image
@@ -54,7 +54,7 @@ jobs:
           docker buildx build \
             --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} \
             -t ${{ secrets.DOCKER_USERNAME }}/gyaani-frontend:latest \
-            --load 
+            --load \
             ./client
 
       # Step 7: Push frontend Docker image
