@@ -23,9 +23,10 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+     # ...existing code...
       - name: Build Backend Docker Image
         run: |
-          docker build \
+          docker buildx build \
             --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
             --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
             --build-arg SESSION_SECRET=${{ secrets.SESSION_SECRET }} \
@@ -36,16 +37,21 @@ jobs:
             --build-arg CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} \
             --build-arg STABILITY_API_KEY=${{ secrets.STABILITY_API_KEY }} \
             --build-arg COHERE_API_KEY=${{ secrets.COHERE_API_KEY }} \
-            -t ${{ secrets.DOCKER_USERNAME }}/gyaani-backend:latest ./server
+            -t ${{ secrets.DOCKER_USERNAME }}/gyaani-backend:latest \
+            --load \
+            ./server
 
       - name: Push Backend Docker Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/gyaani-backend:latest
 
       - name: Build Frontend Docker Image
         run: |
-          docker build \
+          docker buildx build \
             --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} \
-            -t ${{ secrets.DOCKER_USERNAME }}/gyaani-frontend:latest ./client
+            -t ${{ secrets.DOCKER_USERNAME }}/gyaani-frontend:latest \
+            --load \
+            ./client
 
       - name: Push Frontend Docker Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/gyaani-frontend:latest
+# ...existing code...
