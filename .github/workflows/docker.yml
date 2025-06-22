@@ -26,37 +26,31 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 4: Build backend Docker image
-      - name: Build Backend Docker Image
-        run: |
-          docker buildx build \
-            --build-arg GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-            --build-arg GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-            --build-arg SESSION_SECRET=${{ secrets.SESSION_SECRET }} \
-            --build-arg PORT=${{ secrets.PORT }} \
-            --build-arg MONGODB_URL=${{ secrets.MONGODB_URL }} \
-            --build-arg CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }} \
-            --build-arg CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }} \
-            --build-arg CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }} \
-            --build-arg STABILITY_API_KEY=${{ secrets.STABILITY_API_KEY }} \
-            --build-arg COHERE_API_KEY=${{ secrets.COHERE_API_KEY }} \
-            -t ${{ secrets.DOCKER_USERNAME }}/gyaani-backend:latest \
-            --load \
-            ./server
+      # Step 4: Build and Push Backend Docker Image
+      - name: Build and Push Backend Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./server
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/gyaani-backend:latest
+          build-args: |
+            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+            SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+            PORT=${{ secrets.PORT }}
+            MONGODB_URL=${{ secrets.MONGODB_URL }}
+            CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
+            CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
+            CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
+            STABILITY_API_KEY=${{ secrets.STABILITY_API_KEY }}
+            COHERE_API_KEY=${{ secrets.COHERE_API_KEY }}
 
-      # Step 5: Push backend Docker image
-      - name: Push Backend Docker Image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/gyaani-backend:latest
-
-      # Step 6: Build frontend Docker image
-      - name: Build Frontend Docker Image
-        run: |
-          docker buildx build \
-            --build-arg VITE_API_URL=${{ secrets.VITE_API_URL }} \
-            -t ${{ secrets.DOCKER_USERNAME }}/gyaani-frontend:latest \
-            --load \
-            ./client
-
-      # Step 7: Push frontend Docker image
-      - name: Push Frontend Docker Image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/gyaani-frontend:latest
+      # Step 5: Build and Push Frontend Docker Image
+      - name: Build and Push Frontend Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./client
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/gyaani-frontend:latest
+          build-args: |
+            VITE_API_URL=${{ secrets.VITE_API_URL }}
